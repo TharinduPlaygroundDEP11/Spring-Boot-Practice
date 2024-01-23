@@ -6,6 +6,9 @@ import lk.ijse.dep11.pos.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/customers")
 public class CustomerController {
@@ -30,5 +33,13 @@ public class CustomerController {
     )
     public CustomerDTO getCustomerById(@RequestParam(value = "id") int customerId) {
         return customerService.getCustomerById(customerId);
+    }
+
+    @GetMapping(
+            path = {"/get-all-customers"}
+    )
+    public List<CustomerDTO> getAllCustomers() {
+        List<CustomerDTO> allCustomers = customerService.getAllCustomers();
+        return allCustomers;
     }
 }
