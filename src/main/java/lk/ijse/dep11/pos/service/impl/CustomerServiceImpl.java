@@ -94,4 +94,14 @@ public class CustomerServiceImpl implements CustomerService {
           throw new RuntimeException("No Customers in the database");
         }
     }
+
+    @Override
+    public String deleteCustomer(int customerId) {
+        if (customerRepo.existsById(customerId)) {
+            customerRepo.deleteById(customerId);
+            return "Customer Deleted";
+        } else {
+            throw new RuntimeException("No Customer Records to delete");
+        }
+    }
 }
