@@ -50,4 +50,13 @@ public class CustomerController {
         String deleted = customerService.deleteCustomer(customerId);
         return deleted;
     }
+
+    @GetMapping(
+            path = {"/get-all-customers-by-active-state"},
+            params = {"status"}
+    )
+    public List<CustomerDTO> getCustomerByActiveState(@RequestParam(value = "status") boolean status) {
+        List<CustomerDTO> customerList = customerService.getCustomersByActiveState(status);
+        return customerList;
+    }
 }

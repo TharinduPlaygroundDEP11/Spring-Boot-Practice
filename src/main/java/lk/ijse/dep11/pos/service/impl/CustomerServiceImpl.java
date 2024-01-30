@@ -104,4 +104,26 @@ public class CustomerServiceImpl implements CustomerService {
             throw new RuntimeException("No Customer Records to delete");
         }
     }
+
+    @Override
+    public List<CustomerDTO> getCustomersByActiveState(boolean status) {
+        List<Customer> customerList = customerRepo.findAllByActiveStatus(status);
+        if (customerList.size() > 0) {
+            List<CustomerDTO> customerDTOList = new ArrayList<>();
+            for (Customer customer : customerList) {
+                CustomerDTO customerDTO = new CustomerDTO(
+                        customer.getCustomerId(),
+                        customer.getCustomerName(),
+                        customer.getCustomerAddress(),
+                        customer.getContactNumbers(),
+                        customer.getNic(),
+                        customer.isActiveStatus()
+                );
+                customerDTOList.add(customerDTO);
+            }
+            return customerDTOList;
+        } else {
+            throw new RuntimeException("No Customers in the database");
+        }
+    }
 }
