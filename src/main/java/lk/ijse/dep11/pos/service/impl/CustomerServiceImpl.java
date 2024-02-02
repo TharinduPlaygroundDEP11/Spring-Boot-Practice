@@ -3,9 +3,12 @@ package lk.ijse.dep11.pos.service.impl;
 import lk.ijse.dep11.pos.dto.CustomerDTO;
 import lk.ijse.dep11.pos.dto.request.CustomerUpdateDTO;
 import lk.ijse.dep11.pos.entity.Customer;
+import lk.ijse.dep11.pos.exeception.NotFoundException;
 import lk.ijse.dep11.pos.repository.CustomerRepo;
 import lk.ijse.dep11.pos.service.CustomerService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,19 +19,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepo customerRepo;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public String saveCustomer(CustomerDTO customerDTO) {
-        Customer customer = new Customer(
-                customerDTO.getCustomerId(),
-                customerDTO.getCustomerName(),
-                customerDTO.getCustomerAddress(),
-                customerDTO.getContactNumbers(),
-                customerDTO.getNic(),
-                customerDTO.isActiveStatus()
-        );
-
+        Customer customer = modelMapper.map(customerDTO, Customer.class);
         customerRepo.save(customer);
-        return customerDTO.getCustomerName() + " Saved";
+        return customerDTO.getCustomerName() + " Saved!";
     }
 
     @Override
@@ -41,14 +40,8 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setNic(customerUpdateDTO.getNic());
             customerRepo.save(customer);
 
-            return new CustomerDTO(
-                    customer.getCustomerId(),
-                    customer.getCustomerName(),
-                    customer.getCustomerAddress(),
-                    customer.getContactNumbers(),
-                    customer.getNic(),
-                    customer.isActiveStatus()
-            );
+            CustomerDTO customerDto = modelMapper.map(customer, CustomerDTO.class);
+            return customerDto;
 
         } else {
             throw new RuntimeException("No Customer found for that Id");
@@ -59,16 +52,11 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDTO getCustomerById(int customerId) {
         if (customerRepo.existsById(customerId)) {
             Customer customer = customerRepo.getReferenceById(customerId);
-            return new CustomerDTO(
-                    customer.getCustomerId(),
-                    customer.getCustomerName(),
-                    customer.getCustomerAddress(),
-                    customer.getContactNumbers(),
-                    customer.getNic(),
-                    customer.isActiveStatus()
-            );
+            CustomerDTO customerDTO = modelMapper.map(customer, CustomerDTO.class);
+            return customerDTO;
         } else {
-            throw new RuntimeException("No Customer found for that ID");
+//            throw new RuntimeException("No Customer found for that ID");
+            throw new NotFoundException("No Customers for that ID");
         }
     }
 
